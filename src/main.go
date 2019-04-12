@@ -1,12 +1,12 @@
-package main
+package src
 
 import (
-	eight "nick.com/proxy/pkg/89proxy/parse"
-	"nick.com/proxy/pkg/engine"
-	"nick.com/proxy/pkg/persist"
-	"nick.com/proxy/pkg/schduler"
-	six "nick.com/proxy/pkg/sixsixproxy/parse"
-	xici "nick.com/proxy/pkg/xici/parse"
+	eight "nick.com/proxy/src/core/parser/89proxy/parse"
+	six "nick.com/proxy/src/core/parser/sixsixproxy/parse"
+	xici "nick.com/proxy/src/core/parser/xici/parse"
+	"nick.com/proxy/src/engine"
+	"nick.com/proxy/src/persist"
+	"nick.com/proxy/src/schduler"
 )
 
 func main() {

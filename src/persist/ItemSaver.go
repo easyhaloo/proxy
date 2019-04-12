@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"nick.com/proxy/pkg/engine"
+	"nick.com/proxy/src/engine"
 	"time"
 )
 

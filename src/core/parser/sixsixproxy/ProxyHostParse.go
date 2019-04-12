@@ -1,12 +1,12 @@
-package parse
+package sixsixproxy
 
 import (
-	"nick.com/proxy/pkg/engine"
+	"nick.com/proxy/src/engine"
 	"regexp"
 )
 
 const (
-	site       = "https://www.kuaidaili.com/"
+	site       = "http://www.66ip.cn/"
 	addressReg = `<td>(\w+\.+\w+\.\w+\.+\w+)</td>`
 	portReg    = `<td>(\d+)</td>`
 	nextReg    = `<a href="/(\d+).html"[^>]*>([^<]+)</a>`

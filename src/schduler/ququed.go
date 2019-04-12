@@ -1,6 +1,6 @@
 package schduler
 
-import "nick.com/proxy/pkg/engine"
+import "nick.com/proxy/src/engine"
 
 type QueueScheduler struct {
 	requestChan chan engine.Request

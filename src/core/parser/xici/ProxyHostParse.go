@@ -1,15 +1,17 @@
-package parse
+package xici
 
 import (
-	"nick.com/proxy/pkg/engine"
+	"fmt"
+	"nick.com/proxy/src/engine"
 	"regexp"
 )
 
 const (
-	site       = "http://www.66ip.cn/"
+	site       = "https://www.xicidaili.com/nn/"
 	addressReg = `<td>(\w+\.+\w+\.\w+\.+\w+)</td>`
 	portReg    = `<td>(\d+)</td>`
-	nextReg    = `<a href="/(\d+).html"[^>]*>([^<]+)</a>`
+
+	nextReg = `<a class="next_page" rel="next" href="/nn/([\d]+)"[^>]*>([^<]+)</a>`
 )
 
 func ProxyHostParse(content []byte, _ string) engine.ParseResult {
@@ -31,11 +33,13 @@ func ProxyHostParse(content []byte, _ string) engine.ParseResult {
 
 	rs := engine.ParseResult{}
 	all := compile3.FindAllSubmatch(content, -1)
-	//for _,v := range all {
-	//	fmt.Println(string(v[1]))
-	//}
-	next := string(all[len(all)-1][1]) + ".html"
+	next := ""
+	for _, v := range all {
+		fmt.Println(string(v[1]))
+		next = string(v[1])
+	}
 	nextUrl := site + next
+
 	// 下一页还用此解析器
 	rs.Proxys = proxys
 	rs.NextRequest = engine.Request{

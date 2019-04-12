@@ -2,7 +2,7 @@ package engine
 
 import (
 	"log"
-	"nick.com/proxy/pkg/fetcher"
+	"nick.com/proxy/src/fetcher"
 )
 
 func Worker(r Request) (ParseResult, error) {

@@ -1,9 +1,9 @@
-package parse
+package _9proxy
 
 import (
 	"fmt"
 	"log"
-	"nick.com/proxy/pkg/engine"
+	"nick.com/proxy/src/engine"
 	"regexp"
 )
 

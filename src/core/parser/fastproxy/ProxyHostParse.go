@@ -1,17 +1,15 @@
-package parse
+package fastproxy
 
 import (
-	"fmt"
-	"nick.com/proxy/pkg/engine"
+	"nick.com/proxy/src/engine"
 	"regexp"
 )
 
 const (
-	site       = "https://www.xicidaili.com/nn/"
+	site       = "https://www.kuaidaili.com/"
 	addressReg = `<td>(\w+\.+\w+\.\w+\.+\w+)</td>`
 	portReg    = `<td>(\d+)</td>`
-
-	nextReg = `<a class="next_page" rel="next" href="/nn/([\d]+)"[^>]*>([^<]+)</a>`
+	nextReg    = `<a href="/(\d+).html"[^>]*>([^<]+)</a>`
 )
 
 func ProxyHostParse(content []byte, _ string) engine.ParseResult {
@@ -33,13 +31,11 @@ func ProxyHostParse(content []byte, _ string) engine.ParseResult {
 
 	rs := engine.ParseResult{}
 	all := compile3.FindAllSubmatch(content, -1)
-	next := ""
-	for _, v := range all {
-		fmt.Println(string(v[1]))
-		next = string(v[1])
-	}
+	//for _,v := range all {
+	//	fmt.Println(string(v[1]))
+	//}
+	next := string(all[len(all)-1][1]) + ".html"
 	nextUrl := site + next
-
 	// 下一页还用此解析器
 	rs.Proxys = proxys
 	rs.NextRequest = engine.Request{
