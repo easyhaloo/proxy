@@ -1,9 +1,5 @@
 package engine
 
-import (
-	"fmt"
-)
-
 type ConcurrentEngine struct {
 	MaxWorkerCount int
 	Scheduler      Scheduler
@@ -49,7 +45,7 @@ func (e *ConcurrentEngine) Run(seed ...Request) {
 		if IsVisited(result.NextRequest.Url) {
 			continue
 		}
-		fmt.Println("submit task, the url : " + result.NextRequest.Url)
+	//	fmt.Println("submit task, the url : " + result.NextRequest.Url)
 		e.Scheduler.Submit(result.NextRequest)
 	}
 }

@@ -9,6 +9,7 @@ import (
 	"golang.org/x/text/transform"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"time"
 )
@@ -28,24 +29,52 @@ func Fetcher(url string) ([]byte, error) {
 		"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36")
 
 	resp, err := client.Do(request)
-	//url2.Parse()
-	defer resp.Body.Close()
+
 	if err != nil {
 		return nil, err
 	}
 	loop := 0
-	for resp.StatusCode != http.StatusOK && loop < 10 {
+	for resp == nil || (resp.StatusCode != http.StatusOK && loop < 10) {
 		resp, err = client.Do(request)
 		loop++
-		fmt.Errorf("抓取页面出错，返回码[%d],尝试重新抓取，重试次数:[%d]\n", resp.StatusCode, loop)
+		if resp != nil {
+			fmt.Errorf("抓取页面出错，返回码[%d],尝试重新抓取，重试次数:[%d]\n", resp.StatusCode, loop)
+		}
 	}
+
+	loop = 0
+
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("抓取页面出错，返回码[%d],已达到最大尝试次数\n", resp.StatusCode)
+		client = proxyClient()
+		if client == nil {
+			return nil, fmt.Errorf("无法获取代理客户端\n")
+		} else {
+			for resp.StatusCode != http.StatusOK && loop < 10 {
+				log.Printf("使用代理客户端进行请求,请求地址：%v", url)
+				resp, err = client.Do(request)
+				loop++
+				for resp == nil {
+					client = proxyClient()
+					resp, err = client.Do(request)
+				}
+				//log.Printf("使用代理客户端进行请求,返回状态吗：%v", resp.StatusCode)
+				fmt.Errorf("代理客户端进行请求，抓取页面出错，返回码[%d],尝试重新抓取，重试次数:[%d]\n", resp.StatusCode, loop)
+			}
+		}
+		if err != nil || resp.StatusCode != http.StatusOK {
+			return nil, fmt.Errorf("抓取页面出错，返回码[%d],已达到最大尝试次数\n", resp.StatusCode)
+		}
 	}
-	fmt.Printf("抓取页面url:[%s]\n", url)
+
+	if resp == nil {
+		return nil, fmt.Errorf("请求地址为：%s,返回体为空", url)
+	}
+
+	//fmt.Printf("抓取页面url:[%s]\n", url)
 	e := determineEncoding(resp.Body)
 	// 转换类型
 	utf8Reader := transform.NewReader(resp.Body, e.NewDecoder())
+	defer resp.Body.Close()
 	return ioutil.ReadAll(utf8Reader)
 }
 

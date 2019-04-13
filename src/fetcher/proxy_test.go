@@ -11,9 +11,11 @@ import (
 )
 
 func TestFetcher2(t *testing.T) {
-	proxyAddr := "http://localhost:8080/"
+	//proxyAddr := "http://94.74.165.241:80/"
+	proxyAddr := "http://45.76.163.103:80/"
 	//httpUrl := "http://www.ip.cn/"
 	httpUrl := "http://icanhazip.com/"
+	//httpUrl := "https://www.xicidaili.com/nn/"
 	proxy, err := url.Parse(proxyAddr)
 	if err != nil {
 		log.Fatal(err)

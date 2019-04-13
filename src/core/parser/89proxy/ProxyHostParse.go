@@ -1,8 +1,6 @@
 package _9proxy
 
 import (
-	"fmt"
-	"log"
 	"nick.com/proxy/src/engine"
 	"regexp"
 )
@@ -35,11 +33,10 @@ func ProxyHostParse(content []byte, _ string) engine.ParseResult {
 	all := compile3.FindAllSubmatch(content, -1)
 	next := ""
 	for _, v := range all {
-		fmt.Println(string(v[1]))
 		next = string(v[1])
 	}
 	if next == "" {
-		log.Printf("crawl is end\n")
+		//log.Printf("crawl is end\n")
 	}
 	next = "index_" + next + ".html"
 	nextUrl := site + next

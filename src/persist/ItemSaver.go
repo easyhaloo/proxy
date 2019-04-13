@@ -17,9 +17,11 @@ func ItemSaver(index string, factory redis.RedisFactory) (chan engine.Proxy, err
 		for item := range ch {
 			err := Save(item, factory)
 			if err != nil {
-				log.Printf("Item Saver : Save error : %s", err)
+				//log.Printf("Item Saver : Save error : %s", err)
 			} else {
 				itemCount++
+				redisInfo := "http://" + item.Ip + ":" + item.Port
+				redis.PushKey(redisInfo)
 				log.Printf("Item Saver : Save success : %s,count:%v", item, itemCount)
 			}
 		}
@@ -28,7 +30,6 @@ func ItemSaver(index string, factory redis.RedisFactory) (chan engine.Proxy, err
 }
 
 func Save(item engine.Proxy, factory redis.RedisFactory) error {
-	log.Printf("Item Saver : Save error : %s.", item)
 	if item.Port == "" {
 		return errors.New("item not be arrowed null")
 	}
@@ -44,8 +45,9 @@ func Save(item engine.Proxy, factory redis.RedisFactory) error {
 			log.Printf("set value to redis is error, the error : %s", err)
 		}
 		log.Printf("set value to redis is success")
+		return err
 	}
-	return nil
+	return errors.New("proxy is invalid")
 }
 
 const targetUrl = "http://icanhazip.com/"
@@ -65,7 +67,7 @@ func proxyCheck(proxy engine.Proxy) bool {
 		Timeout: time.Second * 10,
 	}
 	if resp, err := c.Get(targetUrl); err != nil {
-		log.Printf("proxy url is invalid , the url :%s", proxyUrl)
+		//log.Printf("proxy url is invalid , the url :%s", proxyUrl)
 		return false
 	} else if resp.StatusCode == http.StatusOK {
 		defer resp.Body.Close()
