@@ -1,9 +1,10 @@
-package src
+package main
 
 import (
-	eight "nick.com/proxy/src/core/parser/89proxy/parse"
-	six "nick.com/proxy/src/core/parser/sixsixproxy/parse"
-	xici "nick.com/proxy/src/core/parser/xici/parse"
+	"nick.com/proxy/src/core/parser/89proxy"
+	"nick.com/proxy/src/core/parser/sixsixproxy"
+	"nick.com/proxy/src/core/parser/xici"
+	"nick.com/proxy/src/core/redis"
 	"nick.com/proxy/src/engine"
 	"nick.com/proxy/src/persist"
 	"nick.com/proxy/src/schduler"
@@ -11,7 +12,6 @@ import (
 
 func main() {
 
-	saver, _ := persist.ItemSaver("xxx")
 	seed := []engine.Request{
 		{
 			Url:   "https://www.xicidaili.com/nn",
@@ -19,14 +19,16 @@ func main() {
 		},
 		{
 			Url:   "http://www.66ip.cn/",
-			Parse: engine.NewFuncParse(six.ProxyHostParse, "proxy"),
+			Parse: engine.NewFuncParse(sixsixproxy.ProxyHostParse, "proxy"),
 		},
 		{
 			Url:   "http://www.89ip.cn/",
-			Parse: engine.NewFuncParse(eight.ProxyHostParse, "proxy"),
+			Parse: engine.NewFuncParse(_9proxy.ProxyHostParse, "proxy"),
 		},
 	}
-
+	factory := redis.RedisFactory{}
+	factory.Initialization()
+	saver, _ := persist.ItemSaver("xxx", factory)
 	e := engine.ConcurrentEngine{
 		Scheduler:      &schduler.QueueScheduler{},
 		MaxWorkerCount: 100,

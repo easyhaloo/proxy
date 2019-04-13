@@ -5,33 +5,45 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"nick.com/proxy/src/core/redis"
 	"nick.com/proxy/src/engine"
 	"time"
 )
 
-func ItemSaver(index string) (chan engine.Proxy, error) {
+func ItemSaver(index string, factory redis.RedisFactory) (chan engine.Proxy, error) {
 	ch := make(chan engine.Proxy, 1024)
 	go func() {
 		itemCount := 0
 		for item := range ch {
-			itemCount++
-			err := Save(item)
-			log.Printf("Item Saver : Save error : %s,count:%v", item, itemCount)
+			err := Save(item, factory)
 			if err != nil {
 				log.Printf("Item Saver : Save error : %s", err)
+			} else {
+				itemCount++
+				log.Printf("Item Saver : Save success : %s,count:%v", item, itemCount)
 			}
 		}
 	}()
 	return ch, nil
 }
 
-func Save(item engine.Proxy) error {
+func Save(item engine.Proxy, factory redis.RedisFactory) error {
 	log.Printf("Item Saver : Save error : %s.", item)
 	if item.Port == "" {
 		return errors.New("item not be arrowed null")
 	}
 	if proxyCheck(item) {
 		log.Printf("proxy url [%s] is valid.", item)
+		connection := factory.NewConnection()
+		contents, err := item.Serialization()
+		if err != nil {
+			log.Printf("serialization is failure.")
+		}
+		err = connection.Set(item.Ip, string(contents), time.Duration(7*time.Hour)).Err()
+		if err != nil {
+			log.Printf("set value to redis is error, the error : %s", err)
+		}
+		log.Printf("set value to redis is success")
 	}
 	return nil
 }

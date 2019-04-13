@@ -1,5 +1,6 @@
 # redis　配置信息
 redis:
+  count: 10
   address : "106.14.0.100:6379"
   database: 0
   password:

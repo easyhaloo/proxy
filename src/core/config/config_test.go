@@ -8,5 +8,6 @@ import (
 func TestReaderConfig(t *testing.T) {
 
 	config := InitConfig()
-	fmt.Println(config)
+	info := GetRedisInfo()
+	fmt.Println(config,info)
 }

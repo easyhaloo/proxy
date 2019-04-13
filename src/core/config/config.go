@@ -6,19 +6,33 @@ import (
 	"log"
 )
 
-const fileName = "../../config/config.yml"
+const fileName = "/home/haloo/go/src/nick.com/proxy/config/config.yml"
 
 type Config struct {
 	// redis 配置信息
-	Redis struct {
-		Address  string `yaml:"address"`
-		Password string `yaml:"password"`
-		DB       int    `yaml:"database"`
-	}
+	Redis redis
 }
 
-func InitConfig() Config {
-	config := Config{}
+// redis 连接信息结构体
+type redis struct {
+	Address  string `yaml:"address"`
+	Password string `yaml:"password"`
+	DB       int    `yaml:"database"`
+	Count    int    `yaml:count`
+}
+
+func GetRedisInfo() redis {
+	InitConfig()
+	return config.Redis
+}
+
+var config *Config
+
+func InitConfig() *Config {
+	if config != nil {
+		log.Printf("config already initialized")
+		return config
+	}
 	if contents, err := ioutil.ReadFile(fileName); err != nil {
 		log.Printf("读取配置文件出错．．．\n")
 		panic(err)

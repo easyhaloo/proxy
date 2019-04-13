@@ -1,5 +1,7 @@
 package engine
 
+import "encoding/json"
+
 type ParseFunc func(body []byte, url string) ParseResult
 
 type Parser interface {
@@ -20,6 +22,17 @@ type ParseResult struct {
 	Requests    Request
 	Proxys      []Proxy
 	NextRequest Request
+}
+
+// 序列化
+func (p *Proxy) Serialization() ([]byte, error) {
+	return json.Marshal(p)
+}
+
+// 反序列化
+func (p *Proxy) Deserialization(content []byte) (*Proxy,error) {
+	 err := json.Unmarshal(content, &p)
+	 return p,err
 }
 
 // 默认的解析方法
